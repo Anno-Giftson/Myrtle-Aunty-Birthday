@@ -55,13 +55,13 @@
     text-align: left;
   }
 
-  /* ✅ Ensure acronym letters align perfectly */
+  /* Ensure acronym letters align perfectly */
   .acronym-line div:first-child {
     font-family: monospace;
-    text-align: right; /* aligns letters and dash flush */
+    text-align: right;
   }
 
-  /* ✅ Make final message as big as possible without overflowing */
+  /* Make final message as big as possible without overflowing */
   .final {
     font-size: clamp(4rem, 10vw, 8rem);
     font-weight: bold;
@@ -91,14 +91,19 @@ const sections = [
       ["E —", "Encourager of hearts"]
     ]
   },
-  // ✅ Add the new verse here
-  "Isaiah 40:31<br>But those who hope in the Lord will renew their strength. They will soar on wings like eagles; they will run and not grow weary, they will walk and not be faint.",
+  {
+    verse: [
+      "Isaiah 40:31",
+      "But those who hope in the Lord will renew their strength. They will soar on wings like eagles; they will run and not grow weary, they will walk and not be faint."
+    ]
+  },
   "We are deeply grateful for you, Myrtle Aunty, and for the many lives you have touched through your faith and care."
 ];
 
 const message = document.getElementById("message");
 let index = 0;
 
+/* ---------- helpers ---------- */
 function fadeOut(next) {
   message.style.opacity = 0;
   setTimeout(next, 1100);
@@ -118,6 +123,7 @@ function fadeInChars(chars, done, speed = 55) {
   nextChar();
 }
 
+/* ---------- section renderer ---------- */
 function showSection(section) {
   message.innerHTML = "";
   message.className = "";
@@ -136,9 +142,8 @@ function showSection(section) {
       const right = document.createElement("div");
 
       [...leftText].forEach(c => {
-        if (c === " ") {
-          left.appendChild(document.createTextNode(" "));
-        } else {
+        if (c === " ") left.appendChild(document.createTextNode(" "));
+        else {
           const span = document.createElement("span");
           span.className = "char";
           span.textContent = c;
@@ -148,9 +153,8 @@ function showSection(section) {
       });
 
       [...rightText].forEach(c => {
-        if (c === " ") {
-          right.appendChild(document.createTextNode(" "));
-        } else {
+        if (c === " ") right.appendChild(document.createTextNode(" "));
+        else {
           const span = document.createElement("span");
           span.className = "char";
           span.textContent = c;
@@ -169,12 +173,34 @@ function showSection(section) {
     return;
   }
 
+  // VERSE SECTION
+  if (section.verse) {
+    message.innerHTML = "";
+    const chars = [];
+    section.verse.forEach((line, lineIndex) => {
+      if (lineIndex > 0) message.appendChild(document.createElement("br"));
+      [...line].forEach(c => {
+        if (c === " ") message.appendChild(document.createTextNode(" "));
+        else {
+          const span = document.createElement("span");
+          span.className = "char";
+          span.textContent = c;
+          message.appendChild(span);
+          chars.push(span);
+        }
+      });
+    });
+
+    requestAnimationFrame(() => message.style.opacity = 1);
+    fadeInChars(chars, () => fadeOut(nextSection));
+    return;
+  }
+
   // NORMAL TEXT
   const chars = [];
   [...section].forEach(c => {
-    if (c === " ") {
-      message.appendChild(document.createTextNode(" "));
-    } else {
+    if (c === " ") message.appendChild(document.createTextNode(" "));
+    else {
       const span = document.createElement("span");
       span.className = "char";
       span.textContent = c;
@@ -196,6 +222,7 @@ function nextSection() {
   }
 }
 
+/* ---------- final ---------- */
 function showFinal() {
   message.innerHTML = "";
   message.className = "final";
@@ -203,9 +230,8 @@ function showFinal() {
 
   const chars = [];
   [..."Happy Birthday, Myrtle Aunty!"].forEach(c => {
-    if (c === " ") {
-      message.appendChild(document.createTextNode(" "));
-    } else {
+    if (c === " ") message.appendChild(document.createTextNode(" "));
+    else {
       const span = document.createElement("span");
       span.className = "char";
       span.textContent = c;
@@ -218,20 +244,8 @@ function showFinal() {
   fadeInChars(chars, () => {});
 }
 
-/* start */
+/* start animation */
 showSection(sections[index]);
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
