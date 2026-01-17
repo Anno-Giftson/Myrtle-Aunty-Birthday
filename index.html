@@ -21,6 +21,8 @@
   #message {
     max-width: 90%;
     word-break: normal;
+    overflow-wrap: anywhere; /* prevents awkward cutting */
+    word-wrap: break-word;
     white-space: pre-wrap;
     text-align: center;
   }
@@ -35,7 +37,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    height: 100%;
   }
   .acronym-line {
     margin: 0.3em 0;
@@ -52,7 +54,7 @@
 <script>
 const sections = [
   "Happy Birthday, Myrtle Aunty! ",
-  "Today we celebrate you with gratitude for the life God has faithfully shaped. Your love, kindness, and gentle strength shine as a light to everyone around you. Through your care, encouragement, and steadfast faith, you reflect the heart of Christ powerfully. ",
+  "Today we pause with deep gratitude to honor you and the life God has faithfully shaped. Your love, kindness, and gentle strength shine as a light to everyone around you. Through your care, encouragement, and steadfast faith, you reflect the heart of Christ powerfully. ",
   "Your presence at Cornerstone Delaware makes a real difference. Your devotion, willingness to serve, and sincere love for others help shape this fellowship into a place of warmth, unity, and spiritual growth. You make people feel seen, welcomed, and valued, and your faith leaves an impact far beyond words. ",
   { // acronym section
     acronym: [
@@ -64,7 +66,7 @@ const sections = [
       "E: Encourager of hearts"
     ]
   },
-  "We are deeply grateful for you, Myrtle Aunty, and today we celebrate your life with thankful hearts."
+  "We are deeply grateful for you, Myrtle Aunty, and today we honor you with thankful hearts."
 ];
 
 let currentSection = 0;
@@ -72,11 +74,10 @@ const messageDiv = document.getElementById('message');
 
 function showSection(section) {
   messageDiv.innerHTML = ""; 
-  messageDiv.style.display = "block"; // default for normal sections
-  messageDiv.style.height = "auto"; // reset height
+  messageDiv.style.display = "block"; 
+  messageDiv.style.height = "auto"; 
 
   if (typeof section === "string") {
-    // Normal text section
     const letters = section.split("");
     letters.forEach(char => {
       const span = document.createElement('span');
@@ -94,7 +95,7 @@ function showSection(section) {
         let delay = 50;
         const char = spans[i].textContent;
         if (char === ".") delay = 1000;
-        else if (char === ",") delay = 50; // short pause for comma
+        else if (char === ",") delay = 50;
         i++;
         setTimeout(fadeNext, delay);
       } else {
@@ -104,7 +105,6 @@ function showSection(section) {
     fadeNext();
 
   } else if (section.acronym) {
-    // Acronym section (vertical)
     messageDiv.innerHTML = "";
     messageDiv.style.display = "flex";
     messageDiv.style.flexDirection = "column";
@@ -182,11 +182,11 @@ function showFinalMessage() {
   }, 100);
 }
 
-// start animation
 showSection(sections[currentSection]);
 </script>
 </body>
 </html>
+
 
 
 
