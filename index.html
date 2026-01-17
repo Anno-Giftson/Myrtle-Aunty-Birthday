@@ -11,16 +11,20 @@
     align-items: center;
     height: 100vh;
     font-family: Georgia, serif;
-    font-size: 1.8em;
+    font-size: 3em; /* bigger font to fill screen */
     text-align: center;
     color: #333;
     padding: 2rem;
+    overflow: hidden;
+  }
+  #message {
+    word-break: normal; /* prevent breaking words */
+    white-space: pre-wrap; /* keep line breaks */
   }
   .fade-letter {
     opacity: 0;
     display: inline-block;
-    transition: opacity 0.5s;
-    white-space: pre-wrap; /* keeps line breaks for acronym */
+    transition: opacity 0.3s;
   }
 </style>
 </head>
@@ -29,10 +33,10 @@
 
 <script>
 const sections = [
-  "Happy Birthday, Myrtle Aunty!",
-  "Today we celebrate you with gratitude for the life God has faithfully shaped.\nYour love, kindness, and gentle strength shine as a light to everyone around you.\nThrough your care, encouragement, and steadfast faith, you reflect the heart of Christ powerfully.",
-  "Your presence at Cornerstone Delaware makes a real difference.\nYour devotion, willingness to serve, and sincere love for others help shape this fellowship into a place of warmth, unity, and spiritual growth.\nYou make people feel seen, welcomed, and valued, and your faith leaves an impact far beyond words.",
-  "Myrtle Aunty – a life that reflects your name:\nM: Mighty in faith\nY: Yielded to God’s will\nR: Radiant with love\nT: Touching lives with kindness\nL: Loving toward all\nE: Encourager of hearts",
+  "Happy Birthday, Myrtle Aunty! ",
+  "Today we celebrate you with gratitude for the life God has faithfully shaped. Your love, kindness, and gentle strength shine as a light to everyone around you. Through your care, encouragement, and steadfast faith, you reflect the heart of Christ powerfully. ",
+  "Your presence at Cornerstone Delaware makes a real difference. Your devotion, willingness to serve, and sincere love for others help shape this fellowship into a place of warmth, unity, and spiritual growth. You make people feel seen, welcomed, and valued, and your faith leaves an impact far beyond words. ",
+  "Myrtle Aunty – a life that reflects your name:\nM: Mighty in faith\nY: Yielded to God’s will\nR: Radiant with love\nT: Touching lives with kindness\nL: Loving toward all\nE: Encourager of hearts ",
   "We are deeply grateful for you, Myrtle Aunty, and today we celebrate your life with thankful hearts."
 ];
 
@@ -42,6 +46,7 @@ const messageDiv = document.getElementById('message');
 function showSection(sectionText) {
   messageDiv.innerHTML = ""; // clear screen
   const letters = sectionText.split("");
+  
   letters.forEach(char => {
     const span = document.createElement('span');
     span.className = 'fade-letter';
@@ -51,18 +56,25 @@ function showSection(sectionText) {
 
   const spans = document.querySelectorAll('.fade-letter');
   let i = 0;
-  const interval = setInterval(() => {
+
+  function fadeNext() {
     if (i < spans.length) {
       spans[i].style.opacity = 1;
+      let delay = 50; // normal delay per letter
+      const char = spans[i].textContent;
+      if (char === ".") delay = 1000; // 1 sec pause after period
+      else if (char === ",") delay = 500; // 0.5 sec pause after comma
       i++;
+      setTimeout(fadeNext, delay);
     } else {
-      clearInterval(interval);
       setTimeout(() => {
         currentSection++;
         if (currentSection < sections.length) showSection(sections[currentSection]);
       }, 2000); // pause 2 sec before next section
     }
-  }, 50); // letter fade-in speed
+  }
+
+  fadeNext();
 }
 
 // start animation
@@ -70,3 +82,4 @@ showSection(sections[currentSection]);
 </script>
 </body>
 </html>
+
