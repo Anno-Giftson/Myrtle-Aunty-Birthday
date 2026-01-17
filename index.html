@@ -20,11 +20,18 @@
   #message {
     word-break: normal; /* prevent breaking words */
     white-space: pre-wrap; /* keep line breaks */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   .fade-letter {
     opacity: 0;
     display: inline-block;
     transition: opacity 0.3s;
+    white-space: pre-wrap;
+  }
+  .acronym-line {
+    margin: 0.3em 0; /* spacing between acronym lines */
   }
 </style>
 </head>
@@ -36,45 +43,102 @@ const sections = [
   "Happy Birthday, Myrtle Aunty! ",
   "Today we celebrate you with gratitude for the life God has faithfully shaped. Your love, kindness, and gentle strength shine as a light to everyone around you. Through your care, encouragement, and steadfast faith, you reflect the heart of Christ powerfully. ",
   "Your presence at Cornerstone Delaware makes a real difference. Your devotion, willingness to serve, and sincere love for others help shape this fellowship into a place of warmth, unity, and spiritual growth. You make people feel seen, welcomed, and valued, and your faith leaves an impact far beyond words. ",
-  "Myrtle Aunty – a life that reflects your name:\nM: Mighty in faith\nY: Yielded to God’s will\nR: Radiant with love\nT: Touching lives with kindness\nL: Loving toward all\nE: Encourager of hearts ",
+  { // acronym section as an object
+    acronym: [
+      "M: Mighty in faith",
+      "Y: Yielded to God’s will",
+      "R: Radiant with love",
+      "T: Touching lives with kindness",
+      "L: Loving toward all",
+      "E: Encourager of hearts"
+    ]
+  },
   "We are deeply grateful for you, Myrtle Aunty, and today we celebrate your life with thankful hearts."
 ];
 
 let currentSection = 0;
 const messageDiv = document.getElementById('message');
 
-function showSection(sectionText) {
+function showSection(section) {
   messageDiv.innerHTML = ""; // clear screen
-  const letters = sectionText.split("");
-  
-  letters.forEach(char => {
-    const span = document.createElement('span');
-    span.className = 'fade-letter';
-    span.textContent = char;
-    messageDiv.appendChild(span);
-  });
 
-  const spans = document.querySelectorAll('.fade-letter');
-  let i = 0;
+  if (typeof section === "string") {
+    // Normal text section
+    const letters = section.split("");
+    letters.forEach(char => {
+      const span = document.createElement('span');
+      span.className = 'fade-letter';
+      span.textContent = char;
+      messageDiv.appendChild(span);
+    });
 
-  function fadeNext() {
-    if (i < spans.length) {
-      spans[i].style.opacity = 1;
-      let delay = 50; // normal delay per letter
-      const char = spans[i].textContent;
-      if (char === ".") delay = 1000; // 1 sec pause after period
-      else if (char === ",") delay = 500; // 0.5 sec pause after comma
-      i++;
-      setTimeout(fadeNext, delay);
-    } else {
-      setTimeout(() => {
-        currentSection++;
-        if (currentSection < sections.length) showSection(sections[currentSection]);
-      }, 2000); // pause 2 sec before next section
+    const spans = document.querySelectorAll('.fade-letter');
+    let i = 0;
+
+    function fadeNext() {
+      if (i < spans.length) {
+        spans[i].style.opacity = 1;
+        let delay = 50; // normal delay per letter
+        const char = spans[i].textContent;
+        if (char === ".") delay = 1000; // 1 sec pause after period
+        else if (char === ",") delay = 500; // 0.5 sec pause after comma
+        i++;
+        setTimeout(fadeNext, delay);
+      } else {
+        setTimeout(nextSection, 2000);
+      }
     }
-  }
+    fadeNext();
 
-  fadeNext();
+  } else if (section.acronym) {
+    // Acronym section: vertical lines
+    let lineIndex = 0;
+
+    function showLine() {
+      if (lineIndex < section.acronym.length) {
+        const lineText = section.acronym[lineIndex];
+        const lineDiv = document.createElement('div');
+        lineDiv.className = 'acronym-line';
+        messageDiv.appendChild(lineDiv);
+
+        const letters = lineText.split("");
+        letters.forEach(char => {
+          const span = document.createElement('span');
+          span.className = 'fade-letter';
+          span.textContent = char;
+          lineDiv.appendChild(span);
+        });
+
+        const spans = lineDiv.querySelectorAll('.fade-letter');
+        let i = 0;
+
+        function fadeLetter() {
+          if (i < spans.length) {
+            spans[i].style.opacity = 1;
+            let delay = 50;
+            const char = spans[i].textContent;
+            if (char === ".") delay = 1000;
+            else if (char === ",") delay = 500;
+            i++;
+            setTimeout(fadeLetter, delay);
+          } else {
+            lineIndex++;
+            setTimeout(showLine, 500); // short pause between lines
+          }
+        }
+        fadeLetter();
+      } else {
+        setTimeout(nextSection, 2000);
+      }
+    }
+
+    showLine();
+  }
+}
+
+function nextSection() {
+  currentSection++;
+  if (currentSection < sections.length) showSection(sections[currentSection]);
 }
 
 // start animation
@@ -82,4 +146,5 @@ showSection(sections[currentSection]);
 </script>
 </body>
 </html>
+
 
