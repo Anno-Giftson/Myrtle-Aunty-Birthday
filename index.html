@@ -2,190 +2,178 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Happy Birthday, Myrtle Aunty!</title>
+<title>Happy Birthday, Myrtle Aunty</title>
 <style>
   body {
-    background-color: #fdf6e3;
+    background: black;
+    margin: 0;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     font-family: Georgia, serif;
-    font-size: 3em;
-    text-align: center;
-    color: #333;
-    margin: 0;
-    padding: 2rem;
+    color: white;
     overflow: hidden;
   }
+
   #message {
-    max-width: 90%;
-    word-break: normal;
-    overflow-wrap: anywhere; /* prevents awkward cutting */
-    word-wrap: break-word;
-    white-space: pre-wrap;
+    max-width: 85vw;
     text-align: center;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1.4;
+    white-space: normal;
+
+    /* ✅ word safety */
+    word-break: keep-all;
+    overflow-wrap: normal;
+    hyphens: none;
   }
-  .fade-letter {
+
+  .letter {
     opacity: 0;
     display: inline-block;
-    transition: opacity 0.3s;
-    white-space: pre-wrap;
+    transition: opacity 0.25s ease;
   }
-  .acronym-container {
+
+  .acronym {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100%;
   }
-  .acronym-line {
-    margin: 0.3em 0;
-  }
-  .final-message {
+
+  .final {
+    font-size: clamp(3rem, 6vw, 5rem);
     font-weight: bold;
-    font-size: 4em;
   }
 </style>
 </head>
 <body>
+
 <div id="message"></div>
 
 <script>
 const sections = [
-  "Happy Birthday, Myrtle Aunty! ",
-  "Today we pause with deep gratitude to honor you and the life God has faithfully shaped. Your love, kindness, and gentle strength shine as a light to everyone around you. Through your care, encouragement, and steadfast faith, you reflect the heart of Christ powerfully. ",
-  "Your presence at Cornerstone Delaware makes a real difference. Your devotion, willingness to serve, and sincere love for others help shape this fellowship into a place of warmth, unity, and spiritual growth. You make people feel seen, welcomed, and valued, and your faith leaves an impact far beyond words. ",
-  { // acronym section
+  "Happy Birthday, Myrtle Aunty!",
+
+  "Today we pause with deep gratitude to honor you and the life God has faithfully shaped. Your love, kindness, and gentle strength shine as a light to so many. Through your care and faithfulness, you reflect the heart of Christ in a powerful way.",
+
+  "Your presence at Cornerstone Delaware makes a real difference. Through your devotion, willingness to serve, and sincere love for others, you help shape this fellowship into a place of warmth, unity, and spiritual growth. You make people feel seen, welcomed, and valued.",
+
+  {
     acronym: [
-      "M: Mighty in faith",
-      "Y: Yielded to God’s will",
-      "R: Radiant with love",
-      "T: Touching lives with kindness",
-      "L: Loving toward all",
-      "E: Encourager of hearts"
+      "M — Mighty in faith",
+      "Y — Yielded to God’s will",
+      "R — Radiant with love",
+      "T — Touching lives with kindness",
+      "L — Loving toward all",
+      "E — Encourager of hearts"
     ]
   },
-  "We are deeply grateful for you, Myrtle Aunty, and today we honor you with thankful hearts."
+
+  "We are deeply grateful for you, Myrtle Aunty, and we thank God for the example you set and the lives you have touched."
 ];
 
-let currentSection = 0;
-const messageDiv = document.getElementById('message');
+const container = document.getElementById("message");
+let index = 0;
 
-function showSection(section) {
-  messageDiv.innerHTML = ""; 
-  messageDiv.style.display = "block"; 
-  messageDiv.style.height = "auto"; 
+function typeSection(section) {
+  container.innerHTML = "";
 
-  if (typeof section === "string") {
-    const letters = section.split("");
-    letters.forEach(char => {
-      const span = document.createElement('span');
-      span.className = 'fade-letter';
-      span.textContent = char;
-      messageDiv.appendChild(span);
-    });
-
-    const spans = messageDiv.querySelectorAll('.fade-letter');
-    let i = 0;
-
-    function fadeNext() {
-      if (i < spans.length) {
-        spans[i].style.opacity = 1;
-        let delay = 50;
-        const char = spans[i].textContent;
-        if (char === ".") delay = 1000;
-        else if (char === ",") delay = 50;
-        i++;
-        setTimeout(fadeNext, delay);
-      } else {
-        setTimeout(nextSection, 2000);
-      }
-    }
-    fadeNext();
-
-  } else if (section.acronym) {
-    messageDiv.innerHTML = "";
-    messageDiv.style.display = "flex";
-    messageDiv.style.flexDirection = "column";
-    messageDiv.style.justifyContent = "center";
-    messageDiv.style.height = "100vh";
-
-    const container = document.createElement('div');
-    container.className = 'acronym-container';
-    messageDiv.appendChild(container);
-
-    let lineIndex = 0;
+  // ACRONYM
+  if (section.acronym) {
+    container.className = "acronym";
+    let line = 0;
 
     function showLine() {
-      if (lineIndex < section.acronym.length) {
-        const lineText = section.acronym[lineIndex];
-        const lineDiv = document.createElement('div');
-        lineDiv.className = 'acronym-line';
-        container.appendChild(lineDiv);
-
-        const letters = lineText.split("");
-        letters.forEach(char => {
-          const span = document.createElement('span');
-          span.className = 'fade-letter';
-          span.textContent = char;
-          lineDiv.appendChild(span);
-        });
-
-        const spans = lineDiv.querySelectorAll('.fade-letter');
-        let i = 0;
-
-        function fadeLetter() {
-          if (i < spans.length) {
-            spans[i].style.opacity = 1;
-            let delay = 50;
-            const char = spans[i].textContent;
-            if (char === ".") delay = 1000;
-            else if (char === ",") delay = 50;
-            i++;
-            setTimeout(fadeLetter, delay);
-          } else {
-            lineIndex++;
-            setTimeout(showLine, 300);
-          }
-        }
-        fadeLetter();
-      } else {
-        setTimeout(nextSection, 2000);
+      if (line >= section.acronym.length) {
+        setTimeout(nextSection, 1800);
+        return;
       }
+
+      const div = document.createElement("div");
+      container.appendChild(div);
+
+      const letters = section.acronym[line].split("");
+      let i = 0;
+
+      function typeLetter() {
+        if (i < letters.length) {
+          const span = document.createElement("span");
+          span.className = "letter";
+          span.textContent = letters[i];
+          div.appendChild(span);
+          requestAnimationFrame(() => span.style.opacity = 1);
+          i++;
+          setTimeout(typeLetter, 40);
+        } else {
+          line++;
+          setTimeout(showLine, 400);
+        }
+      }
+      typeLetter();
     }
     showLine();
+    return;
   }
+
+  // NORMAL TEXT
+  container.className = "";
+  const letters = section.split("");
+  let i = 0;
+
+  function typeLetter() {
+    if (i < letters.length) {
+      const span = document.createElement("span");
+      span.className = "letter";
+      span.textContent = letters[i];
+      container.appendChild(span);
+      requestAnimationFrame(() => span.style.opacity = 1);
+      i++;
+      setTimeout(typeLetter, 40);
+    } else {
+      setTimeout(nextSection, 1800);
+    }
+  }
+  typeLetter();
 }
 
 function nextSection() {
-  currentSection++;
-  if (currentSection < sections.length) showSection(sections[currentSection]);
-  else showFinalMessage();
+  index++;
+  if (index < sections.length) {
+    typeSection(sections[index]);
+  } else {
+    showFinal();
+  }
 }
 
-function showFinalMessage() {
-  messageDiv.innerHTML = "";
-  messageDiv.style.display = "flex";
-  messageDiv.style.justifyContent = "center";
-  messageDiv.style.alignItems = "center";
-  messageDiv.style.height = "100vh";
+function showFinal() {
+  container.innerHTML = "";
+  container.className = "final";
 
-  const finalText = "Happy Birthday, Myrtle Aunty!";
-  const span = document.createElement('div');
-  span.className = 'final-message fade-letter';
-  span.textContent = finalText;
-  messageDiv.appendChild(span);
+  const text = "Happy Birthday, Myrtle Aunty!";
+  const letters = text.split("");
+  let i = 0;
 
-  setTimeout(() => {
-    span.style.opacity = 1;
-  }, 100);
+  function typeLetter() {
+    if (i < letters.length) {
+      const span = document.createElement("span");
+      span.className = "letter";
+      span.textContent = letters[i];
+      container.appendChild(span);
+      requestAnimationFrame(() => span.style.opacity = 1);
+      i++;
+      setTimeout(typeLetter, 50);
+    }
+  }
+  typeLetter();
 }
 
-showSection(sections[currentSection]);
+typeSection(sections[index]);
 </script>
+
 </body>
 </html>
+
 
 
 
