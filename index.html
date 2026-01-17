@@ -37,10 +37,9 @@
     hyphens: none;
   }
 
-  .word {
+  .char {
     opacity: 0;
-    transition: opacity 0.9s ease;
-    display: inline-block;
+    transition: opacity 0.8s ease;
   }
 
   .acronym {
@@ -98,56 +97,66 @@ const sections = [
 const message = document.getElementById("message");
 let index = 0;
 
+/* ---------- helpers ---------- */
 function fadeOut(next) {
   message.style.opacity = 0;
-  setTimeout(next, 1000);
+  setTimeout(next, 1100);
 }
 
-function fadeInWords(words, parent, done, speed = 220) {
+function fadeInChars(chars, done, speed = 55) {
   let i = 0;
-  function next() {
-    if (i >= words.length) {
+  function nextChar() {
+    if (i >= chars.length) {
       setTimeout(done, 1600);
       return;
     }
-    words[i].style.opacity = 1;
+    if (chars[i]) chars[i].style.opacity = 1;
     i++;
-    setTimeout(next, speed);
+    setTimeout(nextChar, speed);
   }
-  next();
+  nextChar();
 }
 
+/* ---------- section renderer ---------- */
 function showSection(section) {
   message.innerHTML = "";
   message.className = "";
   message.style.opacity = 0;
 
+  // ACRONYM
   if (section.acronym) {
     message.className = "acronym";
+    const chars = [];
 
-    const wordSpans = [];
-
-    section.acronym.forEach(([letter, text]) => {
+    section.acronym.forEach(([leftText, rightText]) => {
       const row = document.createElement("div");
       row.className = "acronym-line";
 
       const left = document.createElement("div");
       const right = document.createElement("div");
 
-      letter.split(" ").forEach(w => {
-        const span = document.createElement("span");
-        span.className = "word";
-        span.textContent = w + " ";
-        left.appendChild(span);
-        wordSpans.push(span);
+      [...leftText].forEach(c => {
+        if (c === " ") {
+          left.appendChild(document.createTextNode(" "));
+        } else {
+          const span = document.createElement("span");
+          span.className = "char";
+          span.textContent = c;
+          left.appendChild(span);
+          chars.push(span);
+        }
       });
 
-      text.split(" ").forEach(w => {
-        const span = document.createElement("span");
-        span.className = "word";
-        span.textContent = w + " ";
-        right.appendChild(span);
-        wordSpans.push(span);
+      [...rightText].forEach(c => {
+        if (c === " ") {
+          right.appendChild(document.createTextNode(" "));
+        } else {
+          const span = document.createElement("span");
+          span.className = "char";
+          span.textContent = c;
+          right.appendChild(span);
+          chars.push(span);
+        }
       });
 
       row.appendChild(left);
@@ -156,23 +165,26 @@ function showSection(section) {
     });
 
     requestAnimationFrame(() => message.style.opacity = 1);
-    fadeInWords(wordSpans, message, () => fadeOut(nextSection), 180);
+    fadeInChars(chars, () => fadeOut(nextSection));
     return;
   }
 
-  const words = section.split(" ");
-  const spans = [];
-
-  words.forEach(word => {
-    const span = document.createElement("span");
-    span.className = "word";
-    span.textContent = word + " ";
-    message.appendChild(span);
-    spans.push(span);
+  // NORMAL TEXT
+  const chars = [];
+  [...section].forEach(c => {
+    if (c === " ") {
+      message.appendChild(document.createTextNode(" "));
+    } else {
+      const span = document.createElement("span");
+      span.className = "char";
+      span.textContent = c;
+      message.appendChild(span);
+      chars.push(span);
+    }
   });
 
   requestAnimationFrame(() => message.style.opacity = 1);
-  fadeInWords(spans, message, () => fadeOut(nextSection), 200);
+  fadeInChars(chars, () => fadeOut(nextSection));
 }
 
 function nextSection() {
@@ -184,30 +196,35 @@ function nextSection() {
   }
 }
 
+/* ---------- final ---------- */
 function showFinal() {
   message.innerHTML = "";
   message.className = "final";
   message.style.opacity = 0;
 
-  const words = "Happy Birthday, Myrtle Aunty!".split(" ");
-  const spans = [];
-
-  words.forEach(w => {
-    const span = document.createElement("span");
-    span.className = "word";
-    span.textContent = w + " ";
-    message.appendChild(span);
-    spans.push(span);
+  const chars = [];
+  [..."Happy Birthday, Myrtle Aunty!"].forEach(c => {
+    if (c === " ") {
+      message.appendChild(document.createTextNode(" "));
+    } else {
+      const span = document.createElement("span");
+      span.className = "char";
+      span.textContent = c;
+      message.appendChild(span);
+      chars.push(span);
+    }
   });
 
   requestAnimationFrame(() => message.style.opacity = 1);
-  fadeInWords(spans, message, () => {});
+  fadeInChars(chars, () => {});
 }
 
+/* start */
 showSection(sections[index]);
 </script>
 </body>
 </html>
+
 
 
 
