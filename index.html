@@ -20,10 +20,11 @@
   #message {
     max-width: 80vw;
     text-align: center;
-    font-size: clamp(2rem, 3.8vw, 3.2rem);
+    font-size: clamp(2rem, 3.6vw, 3.1rem);
     line-height: 1.5;
+    opacity: 1;
+    transition: opacity 1s ease;
 
-    /* 🔒 prevents word splitting */
     white-space: normal;
     word-break: keep-all;
     overflow-wrap: normal;
@@ -32,18 +33,20 @@
 
   .letter {
     opacity: 0;
-    display: inline;
-    transition: opacity 0.6s ease;
+    transition: opacity 0.8s ease;
   }
 
   .acronym {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start; /* 🔑 alignment */
   }
 
   .acronym-line {
-    margin: 0.3em 0;
+    display: grid;
+    grid-template-columns: 2.5ch auto; /* aligns letters */
+    gap: 0.5ch;
+    margin: 0.3em auto;
   }
 
   .final {
@@ -62,7 +65,7 @@ const sections = [
 
   "Today we pause with deep gratitude to honor you and the life God has faithfully shaped.",
 
-  "Your love, kindness, and gentle strength have been a light to so many, reflecting the heart of Christ in a powerful and steady way.",
+  "Your love, kindness, and gentle strength have been a light to so many, reflecting the heart of Christ in a steady and powerful way.",
 
   "Your presence at Cornerstone Delaware truly matters.",
 
@@ -70,31 +73,30 @@ const sections = [
 
   {
     acronym: [
-      "M — Mighty in faith",
-      "Y — Yielded to God’s will",
-      "R — Radiant with love",
-      "T — Touching lives with kindness",
-      "L — Loving toward all",
-      "E — Encourager of hearts"
+      ["M —", "Mighty in faith"],
+      ["Y —", "Yielded to God’s will"],
+      ["R —", "Radiant with love"],
+      ["T —", "Touching lives with kindness"],
+      ["L —", "Loving toward all"],
+      ["E —", "Encourager of hearts"]
     ]
   },
 
-  "We are deeply grateful for you, Myrtle Aunty, and for the countless lives you have touched through your faith and care."
+  "We are deeply grateful for you, Myrtle Aunty, and for the many lives you have touched through your faith and care."
 ];
 
 const container = document.getElementById("message");
-let sectionIndex = 0;
+let index = 0;
 
-/* ===== LETTER FADE FUNCTION ===== */
-function fadeText(text, parent, done) {
+/* ===== FADE IN TEXT ===== */
+function fadeInText(text, parent, done, speed = 60) {
   parent.innerHTML = "";
-
   const chars = text.split("");
   let i = 0;
 
   function next() {
     if (i >= chars.length) {
-      setTimeout(done, 1800);
+      setTimeout(done, 1200);
       return;
     }
 
@@ -109,66 +111,75 @@ function fadeText(text, parent, done) {
     }
 
     i++;
-    setTimeout(next, 70); // ⏳ slower, smooth fade
+    setTimeout(next, speed);
   }
   next();
 }
 
+/* ===== FADE OUT ===== */
+function fadeOut(next) {
+  container.style.opacity = 0;
+  setTimeout(() => {
+    container.innerHTML = "";
+    container.style.opacity = 1;
+    next();
+  }, 900);
+}
+
 /* ===== SHOW SECTION ===== */
 function showSection(section) {
-  container.innerHTML = "";
-
   if (section.acronym) {
     container.className = "acronym";
     let line = 0;
 
     function showLine() {
       if (line >= section.acronym.length) {
-        setTimeout(nextSection, 2000);
+        setTimeout(() => fadeOut(nextSection), 800);
         return;
       }
 
-      const div = document.createElement("div");
-      div.className = "acronym-line";
-      container.appendChild(div);
+      const row = document.createElement("div");
+      row.className = "acronym-line";
+      container.appendChild(row);
 
-      fadeText(section.acronym[line], div, () => {
-        line++;
-        setTimeout(showLine, 500);
-      });
+      fadeInText(section.acronym[line][0], row, () => {
+        fadeInText(section.acronym[line][1], row, () => {
+          line++;
+          setTimeout(showLine, 250); // ⏱ faster between lines
+        }, 45);
+      }, 45);
     }
     showLine();
     return;
   }
 
   container.className = "";
-  fadeText(section, container, nextSection);
+  fadeInText(section, container, () => fadeOut(nextSection), 65);
 }
 
-/* ===== NEXT SECTION ===== */
+/* ===== NEXT ===== */
 function nextSection() {
-  sectionIndex++;
-  if (sectionIndex < sections.length) {
-    showSection(sections[sectionIndex]);
+  index++;
+  if (index < sections.length) {
+    showSection(sections[index]);
   } else {
     showFinal();
   }
 }
 
-/* ===== FINAL MESSAGE ===== */
+/* ===== FINAL ===== */
 function showFinal() {
-  container.innerHTML = "";
   container.className = "final";
-
-  fadeText("Happy Birthday, Myrtle Aunty!", container, () => {});
+  fadeInText("Happy Birthday, Myrtle Aunty!", container, () => {}, 70);
 }
 
 /* START */
-showSection(sections[sectionIndex]);
+showSection(sections[index]);
 </script>
 
 </body>
 </html>
+
 
 
 
