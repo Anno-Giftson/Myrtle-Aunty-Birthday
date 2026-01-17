@@ -98,11 +98,16 @@ function typeSection(section) {
 
       function typeLetter() {
         if (i < letters.length) {
-          const span = document.createElement("span");
-          span.className = "letter";
-          span.textContent = letters[i];
-          div.appendChild(span);
-          requestAnimationFrame(() => span.style.opacity = 1);
+          if (letters[i] === " ") {
+  container.appendChild(document.createTextNode(" "));
+} else {
+  const span = document.createElement("span");
+  span.className = "letter";
+  span.textContent = letters[i];
+  container.appendChild(span);
+  requestAnimationFrame(() => span.style.opacity = 1);
+}
+
           i++;
           setTimeout(typeLetter, 40);
         } else {
@@ -123,11 +128,16 @@ function typeSection(section) {
 
   function typeLetter() {
     if (i < letters.length) {
-      const span = document.createElement("span");
-      span.className = "letter";
-      span.textContent = letters[i];
-      container.appendChild(span);
-      requestAnimationFrame(() => span.style.opacity = 1);
+      if (letters[i] === " ") {
+  container.appendChild(document.createTextNode(" "));
+} else {
+  const span = document.createElement("span");
+  span.className = "letter";
+  span.textContent = letters[i];
+  container.appendChild(span);
+  requestAnimationFrame(() => span.style.opacity = 1);
+}
+
       i++;
       setTimeout(typeLetter, 40);
     } else {
@@ -156,11 +166,16 @@ function showFinal() {
 
   function typeLetter() {
     if (i < letters.length) {
-      const span = document.createElement("span");
-      span.className = "letter";
-      span.textContent = letters[i];
-      container.appendChild(span);
-      requestAnimationFrame(() => span.style.opacity = 1);
+      if (letters[i] === " ") {
+  container.appendChild(document.createTextNode(" "));
+} else {
+  const span = document.createElement("span");
+  span.className = "letter";
+  span.textContent = letters[i];
+  container.appendChild(span);
+  requestAnimationFrame(() => span.style.opacity = 1);
+}
+
       i++;
       setTimeout(typeLetter, 50);
     }
