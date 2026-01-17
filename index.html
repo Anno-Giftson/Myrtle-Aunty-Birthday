@@ -30,7 +30,6 @@
     line-height: 1.5;
     opacity: 0;
     transition: opacity 1s ease;
-
     white-space: normal;
     word-break: keep-all;
     overflow-wrap: normal;
@@ -56,22 +55,17 @@
     text-align: left;
   }
 
-  .final {
-    font-size: clamp(3rem, 5vw, 4.5rem);
-    font-weight: bold;
+  /* ✅ Ensure acronym letters align perfectly */
+  .acronym-line div:first-child {
+    font-family: monospace;
+    text-align: right; /* aligns letters and dash flush */
   }
 
-  /* ✅ Ensure acronym letters align */
-.acronym-line div:first-child {
-  font-family: monospace;
-}
-
-/* ✅ Make final message bigger */
-.final {
-  font-size: clamp(3.5rem, 7vw, 6rem);
-  font-weight: bold;
-}
-
+  /* ✅ Make final message as big as possible without overflowing */
+  .final {
+    font-size: clamp(4rem, 10vw, 8rem);
+    font-weight: bold;
+  }
 </style>
 </head>
 
@@ -83,15 +77,10 @@
 <script>
 const sections = [
   "Happy Birthday, Myrtle Aunty!",
-
   "Today we pause with deep gratitude to honor you and the life God has faithfully shaped.",
-
   "Your love, kindness, and gentle strength have been a light to so many, reflecting the heart of Christ in a steady and powerful way.",
-
   "Your presence at Cornerstone Delaware truly matters.",
-
   "Through your devotion, willingness to serve, and sincere love for others, you help shape this fellowship into a place of warmth, unity, and spiritual growth.",
-
   {
     acronym: [
       ["M —", "Mighty in faith"],
@@ -102,14 +91,12 @@ const sections = [
       ["E —", "Encourager of hearts"]
     ]
   },
-
   "We are deeply grateful for you, Myrtle Aunty, and for the many lives you have touched through your faith and care."
 ];
 
 const message = document.getElementById("message");
 let index = 0;
 
-/* ---------- helpers ---------- */
 function fadeOut(next) {
   message.style.opacity = 0;
   setTimeout(next, 1100);
@@ -129,7 +116,6 @@ function fadeInChars(chars, done, speed = 55) {
   nextChar();
 }
 
-/* ---------- section renderer ---------- */
 function showSection(section) {
   message.innerHTML = "";
   message.className = "";
@@ -208,7 +194,6 @@ function nextSection() {
   }
 }
 
-/* ---------- final ---------- */
 function showFinal() {
   message.innerHTML = "";
   message.className = "final";
@@ -236,6 +221,7 @@ showSection(sections[index]);
 </script>
 </body>
 </html>
+
 
 
 
