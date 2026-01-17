@@ -17,12 +17,18 @@
     overflow: hidden;
   }
 
+  #wrapper {
+    width: 80vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   #message {
-    max-width: 80vw;
     text-align: center;
-    font-size: clamp(2rem, 3.6vw, 3.1rem);
+    font-size: clamp(2rem, 3.5vw, 3.1rem);
     line-height: 1.5;
-    opacity: 1;
+    opacity: 0;
     transition: opacity 1s ease;
 
     white-space: normal;
@@ -31,22 +37,24 @@
     hyphens: none;
   }
 
-  .letter {
+  .word {
     opacity: 0;
-    transition: opacity 0.8s ease;
+    transition: opacity 0.9s ease;
+    display: inline-block;
   }
 
   .acronym {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* 🔑 alignment */
+    align-items: center;
+    gap: 0.35em;
   }
 
   .acronym-line {
     display: grid;
-    grid-template-columns: 2.5ch auto; /* aligns letters */
-    gap: 0.5ch;
-    margin: 0.3em auto;
+    grid-template-columns: 3ch auto;
+    gap: 0.6ch;
+    text-align: left;
   }
 
   .final {
@@ -57,7 +65,9 @@
 </head>
 
 <body>
-<div id="message"></div>
+<div id="wrapper">
+  <div id="message"></div>
+</div>
 
 <script>
 const sections = [
@@ -85,79 +95,86 @@ const sections = [
   "We are deeply grateful for you, Myrtle Aunty, and for the many lives you have touched through your faith and care."
 ];
 
-const container = document.getElementById("message");
+const message = document.getElementById("message");
 let index = 0;
 
-/* ===== FADE IN TEXT ===== */
-function fadeInText(text, parent, done, speed = 60) {
-  parent.innerHTML = "";
-  const chars = text.split("");
-  let i = 0;
+function fadeOut(next) {
+  message.style.opacity = 0;
+  setTimeout(next, 1000);
+}
 
+function fadeInWords(words, parent, done, speed = 220) {
+  let i = 0;
   function next() {
-    if (i >= chars.length) {
-      setTimeout(done, 1200);
+    if (i >= words.length) {
+      setTimeout(done, 1600);
       return;
     }
-
-    if (chars[i] === " ") {
-      parent.appendChild(document.createTextNode(" "));
-    } else {
-      const span = document.createElement("span");
-      span.className = "letter";
-      span.textContent = chars[i];
-      parent.appendChild(span);
-      requestAnimationFrame(() => span.style.opacity = 1);
-    }
-
+    words[i].style.opacity = 1;
     i++;
     setTimeout(next, speed);
   }
   next();
 }
 
-/* ===== FADE OUT ===== */
-function fadeOut(next) {
-  container.style.opacity = 0;
-  setTimeout(() => {
-    container.innerHTML = "";
-    container.style.opacity = 1;
-    next();
-  }, 900);
-}
-
-/* ===== SHOW SECTION ===== */
 function showSection(section) {
+  message.innerHTML = "";
+  message.className = "";
+  message.style.opacity = 0;
+
   if (section.acronym) {
-    container.className = "acronym";
-    let line = 0;
+    message.className = "acronym";
 
-    function showLine() {
-      if (line >= section.acronym.length) {
-        setTimeout(() => fadeOut(nextSection), 800);
-        return;
-      }
+    const wordSpans = [];
 
+    section.acronym.forEach(([letter, text]) => {
       const row = document.createElement("div");
       row.className = "acronym-line";
-      container.appendChild(row);
 
-      fadeInText(section.acronym[line][0], row, () => {
-        fadeInText(section.acronym[line][1], row, () => {
-          line++;
-          setTimeout(showLine, 250); // ⏱ faster between lines
-        }, 45);
-      }, 45);
-    }
-    showLine();
+      const left = document.createElement("div");
+      const right = document.createElement("div");
+
+      letter.split(" ").forEach(w => {
+        const span = document.createElement("span");
+        span.className = "word";
+        span.textContent = w + " ";
+        left.appendChild(span);
+        wordSpans.push(span);
+      });
+
+      text.split(" ").forEach(w => {
+        const span = document.createElement("span");
+        span.className = "word";
+        span.textContent = w + " ";
+        right.appendChild(span);
+        wordSpans.push(span);
+      });
+
+      row.appendChild(left);
+      row.appendChild(right);
+      message.appendChild(row);
+    });
+
+    requestAnimationFrame(() => message.style.opacity = 1);
+    fadeInWords(wordSpans, message, () => fadeOut(nextSection), 180);
     return;
   }
 
-  container.className = "";
-  fadeInText(section, container, () => fadeOut(nextSection), 65);
+  const words = section.split(" ");
+  const spans = [];
+
+  words.forEach(word => {
+    const span = document.createElement("span");
+    span.className = "word";
+    span.textContent = word + " ";
+    message.appendChild(span);
+    spans.push(span);
+  });
+
+  requestAnimationFrame(() => message.style.opacity = 1);
+  fadeInWords(spans, message, () => fadeOut(nextSection), 200);
 }
 
-/* ===== NEXT ===== */
 function nextSection() {
   index++;
   if (index < sections.length) {
@@ -167,18 +184,31 @@ function nextSection() {
   }
 }
 
-/* ===== FINAL ===== */
 function showFinal() {
-  container.className = "final";
-  fadeInText("Happy Birthday, Myrtle Aunty!", container, () => {}, 70);
+  message.innerHTML = "";
+  message.className = "final";
+  message.style.opacity = 0;
+
+  const words = "Happy Birthday, Myrtle Aunty!".split(" ");
+  const spans = [];
+
+  words.forEach(w => {
+    const span = document.createElement("span");
+    span.className = "word";
+    span.textContent = w + " ";
+    message.appendChild(span);
+    spans.push(span);
+  });
+
+  requestAnimationFrame(() => message.style.opacity = 1);
+  fadeInWords(spans, message, () => {});
 }
 
-/* START */
 showSection(sections[index]);
 </script>
-
 </body>
 </html>
+
 
 
 
